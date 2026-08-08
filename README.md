@@ -15,7 +15,7 @@
 - [Implementation Steps](#implementation-steps)
   - [Phase 1: AWS Infrastructure](#phase-1-aws-infrastructure)
   - [Phase 2: AD DS Installation & Initial OUs](#phase-2-ad-ds-installation--initial-ous)
-  - [Phase 3: OU Structure & User Creation](#phase-3-ou-structure--user-creation)
+  - [Phase 3: OU Structure, User & Group Creation](#phase-3-ou-structure-user--group-creation)
   - [Phase 4: File Shares & NTFS Permissions](#phase-4-file-shares--ntfs-permissions)
   - [Phase 5: Group Policy Hardening](#phase-5-group-policy-hardening)
   - [Phase 6: Ticket Queue — Simulated Day-2 Operations](#phase-6-ticket-queue--simulated-day-2-operations)
@@ -138,29 +138,31 @@ Installed and configured Active Directory Domain Services on DC01, establishing 
 <p float="left">
   <img src="02-ad-ds-installation-ous/07.png" width="32%" />
   <img src="02-ad-ds-installation-ous/09.png" width="32%" />
-  <img src="02-ad-ds-installation-ous/10.png" width="32%" />
+  <img src="02-ad-ds-installation-ous/12.png" width="32%" />
 </p>
 
-*Full set: `02-ad-ds-installation-ous/` (10 screenshots)*
+*Full set: `02-ad-ds-installation-ous/` (12 screenshots)*
 
-### Phase 3: OU Structure & User Creation
+### Phase 3: OU Structure, User & Group Creation
 
-Designed and created **8 Organizational Units** (Domain Controllers, IT, HR, Finance, Sales, Groups, Servers, Service Accounts, Workstations) to reflect departmental structure, and provisioned the initial set of users via PowerShell (`New-ADUser`, `Get-ADUser`).
+Designed and created **8 Organizational Units** (Domain Controllers, IT, HR, Finance, Sales, Groups, Servers, Service Accounts, Workstations) to reflect departmental structure, and provisioned the initial set of users and security groups via PowerShell (`New-ADUser`, `New-ADGroup`, `Get-ADUser`).
 
 <p float="left">
-  <img src="03-ou-user-creation/01.png" width="32%" />
-  <img src="03-ou-user-creation/03.png" width="32%" />
-  <img src="03-ou-user-creation/05.png" width="32%" />
+  <img src="03-ou-user-group-creation/01.png" width="32%" />
+  <img src="03-ou-user-group-creation/03.png" width="32%" />
+  <img src="03-ou-user-group-creation/05.png" width="32%" />
 </p>
 <p float="left">
-  <img src="03-ou-user-creation/07.png" width="32%" />
+  <img src="03-ou-user-group-creation/07.png" width="32%" />
+  <img src="03-ou-user-group-creation/09.png" width="32%" />
+  <img src="03-ou-user-group-creation/12.png" width="32%" />
 </p>
 
-*Full set: `03-ou-user-creation/` (7 screenshots)*
+*Full set: `03-ou-user-group-creation/` (12 screenshots)*
 
 ### Phase 4: File Shares & NTFS Permissions
 
-Expanded departmental structure to cover all **4 departments**, adding **Finance Users** and **Sales Users** security groups and users (Sarah Chen, Mike Torres). Created and verified NTFS permissions and SMB file shares per department via PowerShell.
+Expanded departmental structure to cover all **4 departments**, adding **Finance Users** and **Sales Users** security groups and users (Sarah Chen, Mike Torres). Created and verified NTFS permissions and SMB file shares per department via PowerShell (`New-SmbShare`, `icacls`).
 
 <p float="left">
   <img src="04-file-shares-ntfs/01.png" width="32%" />
@@ -169,9 +171,10 @@ Expanded departmental structure to cover all **4 departments**, adding **Finance
 </p>
 <p float="left">
   <img src="04-file-shares-ntfs/07.png" width="32%" />
+  <img src="04-file-shares-ntfs/08.png" width="32%" />
 </p>
 
-*Full set: `04-file-shares-ntfs/` (7 screenshots)*
+*Full set: `04-file-shares-ntfs/` (8 screenshots)*
 
 ### Phase 5: Group Policy Hardening
 
@@ -186,47 +189,43 @@ Configured and applied GPOs across all four departments:
 
 <p float="left">
   <img src="05-group-policy-hardening/01.png" width="32%" />
-  <img src="05-group-policy-hardening/03.png" width="32%" />
-  <img src="05-group-policy-hardening/05.png" width="32%" />
-</p>
-<p float="left">
+  <img src="05-group-policy-hardening/04.png" width="32%" />
   <img src="05-group-policy-hardening/07.png" width="32%" />
-  <img src="05-group-policy-hardening/09.png" width="32%" />
-  <img src="05-group-policy-hardening/11.png" width="32%" />
 </p>
 <p float="left">
+  <img src="05-group-policy-hardening/10.png" width="32%" />
   <img src="05-group-policy-hardening/13.png" width="32%" />
-  <img src="05-group-policy-hardening/15.png" width="32%" />
   <img src="05-group-policy-hardening/16.png" width="32%" />
 </p>
+<p float="left">
+  <img src="05-group-policy-hardening/19.png" width="32%" />
+  <img src="05-group-policy-hardening/21.png" width="32%" />
+  <img src="05-group-policy-hardening/22.png" width="32%" />
+</p>
 
-*Full set: `05-group-policy-hardening/` (16 screenshots)*
+*Full set: `05-group-policy-hardening/` (22 screenshots)*
 
 > The Account Lockout Policy configured here later played a direct role in Incident 3.
 
 ### Phase 6: Ticket Queue — Simulated Day-2 Operations
 
-Four representative help-desk tickets were worked end-to-end to simulate ongoing AD administration:
+Four representative help-desk tickets were worked end-to-end via PowerShell to simulate ongoing AD administration:
 
 | Ticket | Action |
 |---|---|
-| Account unlock | Unlocked `jsmith`'s account after lockout |
-| Password reset | Reset `mjohnson`'s password |
+| Account unlock | Unlocked `jsmith`'s account after lockout (`Unlock-ADAccount`) |
+| Password reset | Reset `mjohnson`'s password (`Set-ADAccountPassword`) |
 | New hire onboarding | Provisioned Priya Nair into the Sales department (OU, groups, drive mapping) |
-| Offboarding | Disabled `mtorres`'s account per departure process |
+| Offboarding | Disabled `mtorres`'s account per departure process (`Disable-ADAccount`) |
 
 <p float="left">
-  <img src="06-ticket-queue-operations/01.png" width="32%" />
-  <img src="06-ticket-queue-operations/03.png" width="32%" />
-  <img src="06-ticket-queue-operations/05.png" width="32%" />
-</p>
-<p float="left">
-  <img src="06-ticket-queue-operations/07.png" width="32%" />
-  <img src="06-ticket-queue-operations/09.png" width="32%" />
-  <img src="06-ticket-queue-operations/10.png" width="32%" />
+  <img src="06-ticket-queue-operations/01.png" width="24%" />
+  <img src="06-ticket-queue-operations/02.png" width="24%" />
+  <img src="06-ticket-queue-operations/03.png" width="24%" />
+  <img src="06-ticket-queue-operations/04.png" width="24%" />
 </p>
 
-*Full set: `06-ticket-queue-operations/` (10 screenshots)*
+*Full set: `06-ticket-queue-operations/` (4 screenshots — one per ticket)*
 
 ### Phase 7: Windows Client Domain-Join
 
@@ -242,16 +241,8 @@ To demonstrate the client side of the domain — logging in as a standard domain
   <img src="07-client-domain-join-incident3/09.png" width="32%" />
   <img src="07-client-domain-join-incident3/11.png" width="32%" />
 </p>
-<p float="left">
-  <img src="07-client-domain-join-incident3/13.png" width="32%" />
-  <img src="07-client-domain-join-incident3/15.png" width="32%" />
-  <img src="07-client-domain-join-incident3/17.png" width="32%" />
-</p>
-<p float="left">
-  <img src="07-client-domain-join-incident3/19.png" width="32%" />
-</p>
 
-*Full set: `07-client-domain-join-incident3/` (19 screenshots)*
+*Full set: `07-client-domain-join-incident3/` (11 screenshots)*
 
 ---
 
